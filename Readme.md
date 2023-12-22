@@ -14,3 +14,31 @@ Create a training pipeline that takes in new data of batch size 32. To prevent c
 
 
 ## Training the model on the online data
+### Training
+```train_online``` function takes in the online data (new batch) and trains the model. The pseudo code for the function is as follows:
+> ```
+> weight_initial = model.get_weights()
+>
+> for _ in range(5):
+>     cur_batch = mix(old_batch, new_batch)
+>     pred = model(cur_batch)
+>     model.update()
+>
+> weight_after = model.get_weights()
+> model.set_weights(x * weight_initial + (1 - x) * weight_after) 
+> ```
+
+
+### Monitioring Accuracy
+Accuracy is monitored on
+- Test set using ```test_loss``` function.
+- Old dataset + new batches using ```test_online``` function.
+
+```test_online``` function takes test dataloader and new batches trained till now. The pseudo code for the function is as follows:
+> ```
+> for X, y in chain(old_dataloader, new_batches):
+>      pred = model(X)
+>      loss += loss_fn(pred, y)
+>      size += len(X)
+> return loss / size
+>```
